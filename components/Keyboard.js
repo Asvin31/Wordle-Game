@@ -2,20 +2,20 @@ import BackspaceIcon from '@mui/icons-material/Backspace';
 import { Grid } from "@mui/material";
 import StyledButton from './StyledButton';
 
-const KeyBoard = () => {
+const KeyBoard = ({ keyPress }) => {
     const FirstRowLetters = ['Q', 'W', 'E', 'R', 'T', 'Y', 'U', 'I', 'O', 'P']
     const SecondRowLetters = ['A', 'S', 'D', 'F', 'G', 'H', 'J', 'K', 'L']
-    const ThirdRowLetters = ['ENTER', 'Z', 'X', 'C', 'V', 'B', 'N', 'M', 'K', 'back']
+    const ThirdRowLetters = ['ENTER', 'Z', 'X', 'C', 'V', 'B', 'N', 'M', 'back']
     return (
         <Grid container direction="row" justifyContent="center" alignItems="center" spacing={0.5}>
             <Grid item sx={{ display: 'flex', justifyContent: "center", alignItems: "center", gap: 1 }}>
                 {FirstRowLetters.map((letter, index) => (
-
                     <StyledButton
                         colorProp={"normal"}
                         size="small"
                         variant="contained"
                         key={letter}
+                        onClick={(e) => keyPress(e, letter)}
                     >
                         {letter}
                     </StyledButton>
@@ -30,6 +30,7 @@ const KeyBoard = () => {
                         size="small"
                         variant="contained"
                         key={letter}
+                        onClick={(e) => keyPress(e, letter)}
                     >
                         {letter}
                     </StyledButton>
@@ -45,13 +46,16 @@ const KeyBoard = () => {
                                 size={"small"}
                                 variant="contained"
                                 key={letter}
+                                onClick={(e) => keyPress(e, letter)}
                             >
                                 {letter}
                             </StyledButton>
                             :
                             <StyledButton
+                                key={letter}
                                 colorProp={"normal"}
                                 size="small"
+                                onClick={(e) => keyPress(e, letter)}
                                 variant="contained">
                                 <BackspaceIcon />
                             </StyledButton>

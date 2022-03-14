@@ -1,9 +1,13 @@
-import { Grid, TextField, Typography } from '@mui/material';
-import { styled } from '@mui/material/styles';
-import TableCell, { tableCellClasses } from '@mui/material/TableCell';
-import * as React from 'react';
+import { Grid, Typography } from '@mui/material';
+import { useMemo } from 'react';
 
 const WORD_LENGTH = 5;
+
+const getBackGroundColorForValue = (value) => {
+    if (value === "A") return "yellow"
+    if (value === "B") return "blue"
+    return "";
+}
 
 const WordBox = ({ value }) => {
     return (
@@ -18,7 +22,8 @@ const WordBox = ({ value }) => {
                 userSelect: 'none',
                 minHeight: '85%',
                 height: '7vh',
-                margin: '0.5%'
+                margin: '0.5%',
+                backgroundColor: getBackGroundColorForValue(value)
             }}
             key={value}
         >
@@ -29,7 +34,8 @@ const WordBox = ({ value }) => {
 
 function WordRow({ word = '' }) {
     const remainingLetters = WORD_LENGTH - word.length;
-    const words = word.split('').concat(Array(remainingLetters).fill(''));
+    console.log("word---", word);
+    const words = [...word].concat(Array(remainingLetters).fill(''));
     return (
         <Grid
             container
