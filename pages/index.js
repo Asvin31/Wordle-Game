@@ -1,5 +1,5 @@
 import { Container, Divider, Grid, Typography } from "@mui/material"
-import { useState } from "react"
+import { useEffect, useMemo, useState } from "react"
 import KeyBoard from "../components/Keyboard"
 import WordRow from "../components/WordRow"
 
@@ -9,28 +9,64 @@ export default function Home() {
   })
   const [index, setIndex] = useState(0);
   const [stopTyping, setStopTyping] = useState(false);
-  console.log("word ->->->->", word);
-  const keyPress = (e, letter) => {
-    if ((letter != "back" || letter != "ENTER") && !stopTyping) {
-      let existingLetters = word[index];
-      console.info("existingletters -----", existingLetters);
-      if (existingLetters == undefined) {
-        existingLetters = [];
-      }
-      if (existingLetters.length >= 5) {
-        let temp = index + 1;
-        setStopTyping(true);
-        setIndex(temp);
+
+  useEffect(() => {
+    const keyPress = (e) => {
+      let letters = getExistingLetters;
+      if (e?.key === "Enter") {
         guessWord();
         return;
+      }
+      if (e?.key === "Backspace" || e?.key === "Delete") {
+        letters = letters.slice(0, -1);
+        setWord({ ...word, [index]: letters })
+        return;
+      }
+
+      if (e?.key.match(/^[a-z]$/)) {
+        addLetters(e, e.key);
+        return;
+      }
+
+    }
+    window.addEventListener("keydown", keyPress);
+    return () => {
+      window.removeEventListener('keydown', keyPress);
+    };
+  }, []);
+
+  const getExistingLetters = useMemo(() => {
+    let existingLetters = word[index];
+    if (existingLetters == undefined) {
+      existingLetters = [];
+    }
+    return existingLetters
+  }, [word, index])
+
+
+
+  const addLetters = (e, letter) => {
+    let letters = getExistingLetters;
+    if (letter != "back" && letter != "ENTER" && !stopTyping) {
+      if (letters.length >= 5) {
+        return;
       };
-      existingLetters.push(letter)
-      console.info("after push -----", existingLetters);
-      setWord({ ...word, [index]: existingLetters })
+      letters.push(letter)
+      setWord({ ...word, [index]: letters })
+    }
+    if (letter == "ENTER") {
+      guessWord();
+    }
+    if (letter == "back") {
+      letters = letters.slice(0, -1);
+      setWord({ ...word, [index]: letters })
     }
   }
   const guessWord = () => {
+    let temp = index + 1;
+    // setStopTyping(true);
     console.info("result ---", word[index]?.join("").toUpperCase() === "QWERT");
+    setIndex(temp);
   }
   return (
     <Grid item sm={12} xs={12} md={12} lg={12} sx={{ backgroundColor: "#383737", height: '100vh', margin: 'auto' }}>
@@ -50,7 +86,7 @@ export default function Home() {
             <WordRow word={word[5]} />
           </Grid>
           <Grid item sm={12} xs={12} md={8}>
-            <KeyBoard keyPress={keyPress} />
+            <KeyBoard addLetters={addLetters} />
           </Grid>
         </Grid>
       </Container>

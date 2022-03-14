@@ -2,7 +2,7 @@ import BackspaceIcon from '@mui/icons-material/Backspace';
 import { Grid } from "@mui/material";
 import StyledButton from './StyledButton';
 
-const KeyBoard = ({ keyPress }) => {
+const KeyBoard = ({ addLetters }) => {
     const FirstRowLetters = ['Q', 'W', 'E', 'R', 'T', 'Y', 'U', 'I', 'O', 'P']
     const SecondRowLetters = ['A', 'S', 'D', 'F', 'G', 'H', 'J', 'K', 'L']
     const ThirdRowLetters = ['ENTER', 'Z', 'X', 'C', 'V', 'B', 'N', 'M', 'back']
@@ -15,7 +15,7 @@ const KeyBoard = ({ keyPress }) => {
                         size="small"
                         variant="contained"
                         key={letter}
-                        onClick={(e) => keyPress(e, letter)}
+                        onClick={(e) => addLetters(e, letter)}
                     >
                         {letter}
                     </StyledButton>
@@ -30,7 +30,7 @@ const KeyBoard = ({ keyPress }) => {
                         size="small"
                         variant="contained"
                         key={letter}
-                        onClick={(e) => keyPress(e, letter)}
+                        onClick={(e) => addLetters(e, letter)}
                     >
                         {letter}
                     </StyledButton>
@@ -46,7 +46,7 @@ const KeyBoard = ({ keyPress }) => {
                                 size={"small"}
                                 variant="contained"
                                 key={letter}
-                                onClick={(e) => keyPress(e, letter)}
+                                onClick={(e) => addLetters(e, letter)}
                             >
                                 {letter}
                             </StyledButton>
@@ -55,7 +55,7 @@ const KeyBoard = ({ keyPress }) => {
                                 key={letter}
                                 colorProp={"normal"}
                                 size="small"
-                                onClick={(e) => keyPress(e, letter)}
+                                onClick={(e) => addLetters(e, letter)}
                                 variant="contained">
                                 <BackspaceIcon />
                             </StyledButton>
