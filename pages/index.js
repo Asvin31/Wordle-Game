@@ -2,11 +2,18 @@ import CloseIcon from '@mui/icons-material/Close';
 import { Container, Divider, Grid, Typography } from "@mui/material";
 import IconButton from '@mui/material/IconButton';
 import Snackbar from '@mui/material/Snackbar';
-import { useEffect, useMemo, useState } from "react";
+import { useContext, useEffect, useMemo, useState } from "react";
 import KeyBoard from "../components/Keyboard";
 import WordRow from "../components/WordRow";
+import { WordContext } from "../context/WordContext";
+import targetWords from "../words.json";
 
 export default function Home() {
+
+  const offsetFromDate = new Date(2022, 2, 19)
+  const msOffset = Math.abs(new Date().getTime() - offsetFromDate.getTime());
+  const diffDays = Math.ceil(msOffset / (1000 * 60 * 60 * 24));
+  const targetWord = targetWords[diffDays];
   const wordLength = 5;
   const [word, setWord] = useState({
     "-1": []
@@ -15,6 +22,7 @@ export default function Home() {
   const [stopTyping, setStopTyping] = useState(false);
   const [openAlert, setOpenAlert] = useState(false);
   const [message, setMessage] = useState("");
+  const { setCorrectLetters, setWrongLetters, setIncorrectLocation } = useContext(WordContext);
 
   const handleAlertClose = (event) => {
     setMessage("");
@@ -61,6 +69,7 @@ export default function Home() {
     let letters = getExistingLetters;
     if (letter != "back" && letter != "ENTER" && !stopTyping) {
       if (letters.length >= wordLength) {
+        setStopTyping(true);
         return;
       };
       letters.push(letter)
@@ -82,13 +91,31 @@ export default function Home() {
       return;
     }
     let temp = index + 1;
-    // setStopTyping(true);
-    console.info("result ---", word[index]?.join("").toUpperCase() === "QWERT");
-    //setIndex(temp);
+    let correct = [], wrong = [], incorrect = [];
+    const wordArray = word[index];
+    for (var i = 0; i < wordArray.length; i++) {
+      if (targetWord[i] === wordArray[i]) {
+        correct.push(wordArray[i]);
+        console.log("correct words", wordArray[i]);
+      }
+      else if (targetWord.includes(wordArray[i])) {
+        wrong.push(wordArray[i]);
+        console.log("wrong location words", wordArray[i]);
+      }
+      else {
+        incorrect.push(wordArray[i]);
+        console.log("wrong words", wordArray[i]);
+      }
+    }
+    setCorrectLetters(correct);
+    setWrongLetters(wrong);
+    setIncorrectLocation(incorrect);
+    setIndex(temp);
+    setStopTyping(false);
   }
 
   function shakeTiles(index) {
-    const queryGrid = document.getElementsByClassName(index);
+    const queryGrid = document?.getElementsByClassName(index);
     let letterElements = queryGrid[0].children;
     [...letterElements].forEach((element) => {
       let boxElement = element.getElementsByClassName("MuiTypography-root");
@@ -98,11 +125,13 @@ export default function Home() {
   }
 
   function removeTiles(index) {
-    let shakeTiles = document.getElementsByClassName("shake");
-    [...shakeTiles].forEach((element) => {
-      console.log(element);
-      element.classList.remove("shake");
-    })
+    if (process.browser) {
+      let shakeTiles = document.getElementsByClassName("shake");
+      [...shakeTiles].forEach((element) => {
+        console.log(element);
+        element.classList.remove("shake");
+      })
+    }
   }
 
   const action = (

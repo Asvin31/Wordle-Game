@@ -1,16 +1,17 @@
 import { Grid, Typography } from '@mui/material';
+import { useContext } from 'react';
+import { WordContext } from '../context/WordContext';
 
 const WORD_LENGTH = 5;
-
-const getBackGroundColorForValue = (value) => {
-    if (value === "A") return "yellow"
-    if (value === "B") return "blue"
-    return "";
-}
-
 function WordRow({ word = '', index }) {
     const remainingLetters = WORD_LENGTH - word.length;
     const words = [...word].concat(Array(remainingLetters).fill(''));
+    const { correctLetters, wrongLetters, incorrectLocation } = useContext(WordContext);
+    const getBackGroundColorForValue = (value) => {
+        if (correctLetters.includes(value)) return "green"
+        else if (wrongLetters.includes(value)) return "yellow"
+        else if (incorrectLocation.includes(value)) return "grey"
+    }
     return (
         <Grid
             container
